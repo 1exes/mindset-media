@@ -1,0 +1,7 @@
+# Minimal-CI (W16, 23.09.2026): Geheimnis-Sperre + statische Python-Pruefung, keine Tests, kein Deploy.
+# Bausteine aus 1exes/handelswerk/ci-bausteine mit fester Version (Regel 6). Runner: CT367, Tags handelswerk,linux.
+stages: [pruefen]
+
+include:
+  - component: $CI_SERVER_FQDN/1exes/handelswerk/ci-bausteine/geheimnis-sperre@1.0.0
+  - component: $CI_SERVER_FQDN/1exes/handelswerk/ci-bausteine/python-pruefung@1.0.0
