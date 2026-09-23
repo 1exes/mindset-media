@@ -1,7 +1,20 @@
-# Minimal-CI (W16, 23.09.2026): Geheimnis-Sperre + statische Python-Pruefung, keine Tests, kein Deploy.
-# Bausteine aus 1exes/handelswerk/ci-bausteine mit fester Version (Regel 6). Runner: CT367, Tags handelswerk,linux.
+# Minimal-CI (W16, 23.09.2026): Geheimnis-Sperre + ruff (nur echte Fehler), keine Tests, kein Deploy.
+# Baustein mit fester Version (Regel 6). Runner: CT367, Tags handelswerk,linux.
+# Lint-Job eigenstaendig statt Baustein python-pruefung: dessen $HANDELSWERK_CI_VENV ist auf dem
+# Projekt-Runner #2 nicht gesetzt. ruff gepinnt, sonst wird die Pipeline ohne Code-Aenderung rot.
 stages: [pruefen]
 
 include:
   - component: $CI_SERVER_FQDN/1exes/handelswerk/ci-bausteine/geheimnis-sperre@1.0.0
-  - component: $CI_SERVER_FQDN/1exes/handelswerk/ci-bausteine/python-pruefung@1.0.0
+
+lint:
+  stage: pruefen
+  tags: [handelswerk, linux]
+  variables:
+    RUFF_VERSION: "0.15.7"
+  script:
+    - python3 -m venv .venv-ci
+    - . .venv-ci/bin/activate
+    - pip install -q --disable-pip-version-check "ruff==$RUFF_VERSION"
+    - ruff --version
+    - ruff check --select E9,F63,F7,F82 --exclude .venv-ci .
